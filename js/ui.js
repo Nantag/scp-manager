@@ -178,7 +178,7 @@ function overScreen() {
     <h1>${S.over.won ? 'You made it.' : 'It is over.'}</h1>
     <p>${esc(S.over.reason)}</p>
     <div class="grade" style="color:${g.grade === 'S' || g.grade === 'A' ? 'var(--good)' : g.grade === 'F' ? 'var(--bad)' : 'var(--warn)'}">${g.grade}</div>
-    <p class="muted">Site evaluation · score ${g.score}</p>
+    <p class="muted">Site evaluation · score ${g.score}${g.capped ? ' · a terminated posting is graded C at best' : ''}</p>
     <div class="kv">
       <div><span>Weeks served</span><b>${Math.min(S.week - 1, S.week)}</b></div><div><span>Final approval</span><b>${Math.round(S.approval)}</b></div>
       <div><span>Anomalies held</span><b>${S.scps.length}</b></div><div><span>Recovered</span><b>${st.acquired}</b></div>

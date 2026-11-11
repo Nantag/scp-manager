@@ -338,8 +338,14 @@ export function checkOver(S) {
 }
 
 // end-of-posting evaluation
+// How well you ran things, weighted by how long you lasted. A terminated posting is graded C at best.
+const GRADES = ['F', 'D', 'C', 'B', 'A', 'S'];
 export function grade(S) {
-  const score = S.approval * 1.2 + Math.min(60, S.stats.rpTotal / 40) + S.scps.length * 4 - S.stats.deaths * 0.4 - S.stats.peakExposure * 0.3 + (S.over?.won ? 30 : 0);
-  const g = score >= 150 ? 'S' : score >= 120 ? 'A' : score >= 95 ? 'B' : score >= 70 ? 'C' : score >= 45 ? 'D' : 'F';
-  return { score: Math.round(score), grade: g };
+  const weeks = Math.min(YEAR, S.week - 1), lost = !!S.over && !S.over.won;
+  const perf = S.approval * 1.2 + Math.min(60, S.stats.rpTotal / 40) + S.scps.length * 4 - S.stats.deaths * 0.4 - S.stats.peakExposure * 0.3;
+  const score = perf * (0.4 + 0.6 * weeks / YEAR) + (S.over?.won ? 30 : 0);
+  let g = score >= 150 ? 'S' : score >= 120 ? 'A' : score >= 95 ? 'B' : score >= 70 ? 'C' : score >= 45 ? 'D' : 'F';
+  const capped = lost && GRADES.indexOf(g) > GRADES.indexOf('C');
+  if (capped) g = 'C';
+  return { score: Math.round(score), grade: g, capped };
 }
